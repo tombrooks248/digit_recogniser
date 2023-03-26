@@ -42,7 +42,7 @@ with col2:
 st.write('Digit Recogniser is a neural network trained to tell you the number contained in 28x28 pixel image of a handrawn number.')
 @st.cache_data
 def load_data():
-    df = pd.read_csv("../data/user_select_num_images.csv")
+    df = pd.read_csv("data/user_select_num_images.csv")
     return df
 
 ### format the Pandas dataframe so each image is ready for rendering ###
@@ -60,10 +60,10 @@ def digit_img_generator(num_of_images):
         fig.set_size_inches(2.5, 2.5)
         ax.imshow(df_test[i], cmap="gray")
         ax.axis('off')
-        plt.savefig(f'digit_imgs/image{i}.jpeg', bbox_inches='tight',pad_inches = 0)
+        plt.savefig(f'app/digit_imgs/image{i}.jpeg', bbox_inches='tight',pad_inches = 0)
     return_imgs = []
     for i in range(num_of_images):
-        return_imgs.append(Image.open(f'digit_imgs/image{i}.jpeg').convert('L'))
+        return_imgs.append(Image.open(f'app/digit_imgs/image{i}.jpeg').convert('L'))
 
     return  return_imgs
 
