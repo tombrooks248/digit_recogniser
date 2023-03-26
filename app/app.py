@@ -24,7 +24,7 @@ st.set_page_config(
 #On page Title and Logo
 #-------------------------------------------------------------------------------
 
-image = Image.open('numbers_img.jpeg')
+image = Image.open('app/numbers_img.jpeg')
 
 col1, col2 = st.columns(2)
 with col1:
