@@ -21,8 +21,6 @@ st.set_page_config(
     page_title="Digit Reader",
 )
 
-
-
 #On page Title and Logo
 #-------------------------------------------------------------------------------
 
@@ -34,7 +32,7 @@ with col1:
 
     st.write('')
 
-    st.markdown("<h1 style='text-align: center; color: white;'>Digit Reader</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: black;'>Digit Reader</h1>", unsafe_allow_html=True)
 
 with col2:
     st.image(image, width=150)
@@ -73,6 +71,8 @@ def digit_img_generator(num_of_images):
 image_options = digit_img_generator(4)
 
 search_input = None
+user_img_select = None
+
 
 with st.form("select_box_form"):
     img = image_select(
@@ -84,7 +84,6 @@ with st.form("select_box_form"):
    # Every form must have a submit button.
     submitted = st.form_submit_button("Identify Image")
     if submitted:
-        search_input = img
 
         def preproc_image(image):
             image = image.resize((28,28))
@@ -94,29 +93,45 @@ with st.form("select_box_form"):
             image = np.divide(image, array_255)
             return image
         img_arr_for_pred = preproc_image(img)
-        search_input = True
+        user_img_select = True
 
 
+if (user_img_select is not None):
+
+    prediction, pred_arr = make_prediction(img_arr_for_pred)
+
+    if prediction != "unknown":
+        st.markdown('#### Your number is :green['+prediction+'] 👍🎈')
+    else:
+        st.markdown('#### '+ ':red['+prediction+'%]')
+        st.markdown('#### Your number :red[could not be recognised] 😔')
 
 
-
-
-# Specify canvas parameters in application
 
 with st.form("draw_num_form"):
+    st.write("Draw your own number to be identified")
 
-    canvas_result = st_canvas(
-        fill_color="rgba(255, 165, 0, 0.3)",  # Fixed fill color with some opacity
-        stroke_width= 10,
-        stroke_color="#FFFFFF",
-        background_color="#000000",
-        background_image= None,
-        update_streamlit=True,
-        height=150,
-        width= 150,
-        drawing_mode='freedraw',
-        key="canvas",
-    )
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.write(' ')
+
+    with col2:
+            # Specify canvas parameters in application
+        canvas_result = st_canvas(
+            fill_color="rgba(255, 165, 0, 0.3)",  # Fixed fill color with some opacity
+            stroke_width= 10,
+            stroke_color="#FFFFFF",
+            background_color="#000000",
+            background_image= None,
+            update_streamlit=True,
+            height=150,
+            width= 150,
+            drawing_mode='freedraw',
+            key="canvas",
+        )
+    with col1:
+        st.write(' ')
 
    # Every form must have a submit button.
     submitted = st.form_submit_button("Identify Image")
@@ -142,6 +157,9 @@ def preproc_image(image):
 if (search_input is not None):
 
     prediction, pred_arr = make_prediction(img_arr_for_pred)
-    st.write(prediction)
-    st.write(pred_arr[0][0])
-    st.write(0.000004)
+
+    if prediction != "unknown":
+        st.markdown('#### Your number is :green['+prediction+'] 👍🎈')
+    else:
+        st.markdown('#### '+ ':red['+prediction+'%]')
+        st.markdown('#### Your number :red[could not be recognised] 😔')
