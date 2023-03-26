@@ -23,4 +23,4 @@ def make_prediction(preproc_array):
     for i in range(10):
         if prediction[0][i] > 0.9:
             digit = i
-    return str(digit)
+    return str(digit), prediction

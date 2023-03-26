@@ -9,8 +9,10 @@ import pickle
 import matplotlib.pyplot as plt
 import seaborn as sns
 from streamlit_image_select import image_select
+from streamlit_drawable_canvas import st_canvas
 import io
 from PIL import Image
+import cv2 as cv
 
 #import local files
 from model import make_prediction
@@ -82,7 +84,51 @@ with st.form("select_box_form"):
    # Every form must have a submit button.
     submitted = st.form_submit_button("Identify Image")
     if submitted:
-       search_input = img
+        search_input = img
+
+        def preproc_image(image):
+            image = image.resize((28,28))
+            image = np.asarray(image)
+            image = image.reshape(28,28,1)
+            array_255 = np.full((28,28,1), 255)
+            image = np.divide(image, array_255)
+            return image
+        img_arr_for_pred = preproc_image(img)
+        search_input = True
+
+
+
+
+
+
+# Specify canvas parameters in application
+
+with st.form("draw_num_form"):
+
+    canvas_result = st_canvas(
+        fill_color="rgba(255, 165, 0, 0.3)",  # Fixed fill color with some opacity
+        stroke_width= 10,
+        stroke_color="#FFFFFF",
+        background_color="#000000",
+        background_image= None,
+        update_streamlit=True,
+        height=150,
+        width= 150,
+        drawing_mode='freedraw',
+        key="canvas",
+    )
+
+   # Every form must have a submit button.
+    submitted = st.form_submit_button("Identify Image")
+    if submitted:
+
+        def rgb2gray(rgb):
+            return np.dot(rgb[...,:3], [0.2989, 0.5870, 0.1140])
+        search_input = rgb2gray(canvas_result.image_data)
+        search_input = np.rint(search_input)
+        search_input = cv.resize(search_input,(28,28),interpolation=cv.INTER_AREA)
+        img_arr_for_pred = np.expand_dims(search_input, axis=2)
+
 
 #image preprocessing into correct size and shape numpy array
 def preproc_image(image):
@@ -93,7 +139,9 @@ def preproc_image(image):
     image = np.divide(image, array_255)
     return image
 
-if (search_input):
-    img_arr_for_pred = preproc_image(search_input)
-    prediction = make_prediction(img_arr_for_pred)
+if (search_input is not None):
+
+    prediction, pred_arr = make_prediction(img_arr_for_pred)
     st.write(prediction)
+    st.write(pred_arr[0][0])
+    st.write(0.000004)
