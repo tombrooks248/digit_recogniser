@@ -13,7 +13,7 @@ import pickle
 
 
 #load Model
-filename = 'models/digit_model_v2.sav'
+filename = 'models/digit_model_v3.sav'
 model = pickle.load(open(filename, 'rb'))
 
 # make prediction function
